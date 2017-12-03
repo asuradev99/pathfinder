@@ -1,0 +1,4 @@
+sceneSetups:
+- path: Assets/Pathfinder_Projeuct.unity
+  isLoaded: 1
+  isActive: 1

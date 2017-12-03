@@ -1,0 +1,17 @@
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEngine.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEditor.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEngine.Analytics.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEngine.PlaymodeTestsRunner.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEngine.Networking.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEngine.UI.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEngine.HoloLens.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/UnityEngine.VR.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Mono.Cecil.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Unity.SerializationLogic.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Unity.DataContract.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/ICSharpCode.NRefactory.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Unity.UNetWeaver.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Unity.UNetWeaver.dll.mdb
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Unity.CecilTools.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Mono.Cecil.Pdb.dll
+/Users/zaprodos/Desktop/ScienceFairPahtfinder/Temp/bin/Debug/Mono.Cecil.Mdb.dll
