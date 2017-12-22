@@ -21,10 +21,11 @@ public class test : MonoBehaviour {
 	int left, right, up, down;
 
 	void Start () {
+		//run main function
 		StartCoroutine(Spec());
 	}
+	//main function in an enumerator func so we can yield to frame count. 
 	IEnumerator Spec(){
-		Application.targetFrameRate = 10;
 		//initialize reference script for Arraylist containing cell's status
 		all_cells refscript = refSprite.GetComponent<all_cells> ();
 		Closed refvar = refSprite.GetComponent<Closed> ();
@@ -71,8 +72,6 @@ public class test : MonoBehaviour {
 		}
 		//breadth-first-search 
 
-		Debug.Log(refscript.cellref[2].name);
-
 		//initializing status list
 		for (int i = 0; i < 100; i++) {
 			refscript.cell_status.Add(false);
@@ -84,7 +83,6 @@ public class test : MonoBehaviour {
 			refscript.currentNode = refscript.BreadthCoords.Dequeue ();
 			//refscript.cellref [1].GetComponent<SpriteRenderer> ().color = Color.red; 
 			refscript.cellref [refscript.currentNode].name = "Boogy";
-			//Debug.Log (refscript.currentNode + "," + refscript.cellref[refscript.currentNode].GetComponent<Transform>().position.x + "," + refscript.cellref[refscript.currentNode].GetComponent<Transform>().position.y);
 			refscript.cell_status [refscript.currentNode] = true;
 
 			//checks and adds neighbors
