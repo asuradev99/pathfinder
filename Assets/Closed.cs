@@ -23,5 +23,11 @@ public class Closed : MonoBehaviour {
 		if (name == "Boogy") {
 			GetComponent<SpriteRenderer>().color = Color.red;
 		}
+		if (name == "Googy"){
+			GetComponent<SpriteRenderer> ().color = Color.yellow;
+		}
+		if (name == "destination") {
+			GetComponent<SpriteRenderer> ().color = Color.cyan;
+		}
 	}
 }

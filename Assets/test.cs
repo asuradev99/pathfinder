@@ -75,6 +75,7 @@ public class test : MonoBehaviour {
 		//initializing status list
 		for (int i = 0; i < (gridUnits * gridUnits); i++) {
 			refscript.cell_status.Add(false);
+			refscript.parents.Add (-1);
 		}
 		//adds first node to queue
 		refscript.BreadthCoords.Enqueue (0);
@@ -93,6 +94,7 @@ public class test : MonoBehaviour {
 					//Debug.Log ("LEFT: Inserting" + left + "," + refscript.cell_status[left]);
 					refscript.BreadthCoords.Enqueue (left);
 					refscript.cell_status [left] = true;
+					refscript.parents [left] = refscript.currentNode;
 				}
 			}
 
@@ -103,6 +105,7 @@ public class test : MonoBehaviour {
 					//Debug.Log ("RIGHT: Inserting" + right + "," + refscript.cell_status[right]);
 					refscript.BreadthCoords.Enqueue (right);
 					refscript.cell_status [right] = true;
+					refscript.parents [right] = refscript.currentNode;
 				}
 			}
 
@@ -113,6 +116,7 @@ public class test : MonoBehaviour {
 					//Debug.Log ("UP: Inserting" + up + "," + refscript.cell_status[up]);
 					refscript.BreadthCoords.Enqueue (up);
 					refscript.cell_status [up] = true;
+					refscript.parents [up] = refscript.currentNode;
 				}
 			}
 
@@ -123,18 +127,19 @@ public class test : MonoBehaviour {
 					//Debug.Log ("DOWN: Inserting" + down + "," + refscript.cell_status[down]);
 					refscript.BreadthCoords.Enqueue (down);
 					refscript.cell_status [down] = true;
+					refscript.parents [down] = refscript.currentNode;
 				}
 			}
 			yield return new WaitForSeconds(0.05f) ;
 
 		}
-		//tests
-		//for(int i = 0; i < refscript.cell_types.Count; i++){
-			//Debug.Log (refscript.cell_types[i]);
-			//Debug.Log (refscript.cell_id [i]);
-			//Debug.Log (refscript.cell_num [i]);
-		//}
-		//Debug.Log (refscript.cell_types [0]);
+
+		int destination = gridUnits * gridUnits - (gridUnits / 2);
+		refscript.cellref [destination].name = "destination";
+		while (refscript.parents [destination ] != 0) {
+			refscript.cellref [refscript.parents [destination]].name = "Googy";
+			destination = refscript.parents [destination];
+		}
 	}
 
 	// Update is called once per frame

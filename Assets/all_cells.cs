@@ -8,10 +8,12 @@ public class all_cells : MonoBehaviour {
 	public Hashtable cell_id = new Hashtable();
 	public Hashtable cell_num = new Hashtable();
 	public List<bool> cell_status = new List <bool> ();
+	public List<int> parents = new List <int> ();
 	public Queue<int> BreadthCoords = new Queue<int> ();
 	public int currentNode = 0; 
 	public int tX;
 	public int tY;
+
 	// Use this for initialization
 	void Start () {
 		
