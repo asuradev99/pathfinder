@@ -19,7 +19,7 @@ public class test : MonoBehaviour {
 	int  comparator = 0;
 	int comparator2 = 0;
 	int left, right, up, down;
-
+	public int gridUnits = 10;//grid 
 	void Start () {
 		//run main function
 		StartCoroutine(Spec());
@@ -33,12 +33,12 @@ public class test : MonoBehaviour {
 		refscript.cellref.Add(Instantiate (startNode, new Vector3 (this.transform.position.x, this.transform.position.y, 0), Quaternion.identity));
 		refscript.cell_types.Add (Constants.STARTNODE);
 		refscript.cell_id.Add (0, new Vector2 (cX, cY));
-		refscript.cell_num.Add (0, cX * 10 + cY);
+		refscript.cell_num.Add (0, cX * gridUnits + cY);
 		cX += 1;
 		transform.position = new Vector3 (transform.position.x + 6f, transform.position.y, 0);
 
 		//creates the cells and the obstacles in grid. 
-		for (int i = 0; i < 99; i++) {
+		for (int i = 0; i < (gridUnits * gridUnits)-1; i++) {
 			Vector3 myPos = new Vector3 (this.transform.position.x, this.transform.position.y, 0);
 			if (Random.Range (1, 10) > 1) {
 				//clones regular cell and adds its atatus to the list
@@ -54,7 +54,7 @@ public class test : MonoBehaviour {
 
 			//adds cell position to list
 			refscript.cell_id.Add(i+1, new Vector2(cX,cY));
-			refscript.cell_num.Add (i + 1, (int)cY * 10 + cX);
+			refscript.cell_num.Add (i + 1, (int)cY * gridUnits + cX);
 			cX += 1;
 			yield return 0;
 			//moves 6 pixels after each clone 
@@ -62,7 +62,7 @@ public class test : MonoBehaviour {
 
 
 			//if my x-position is greater than 54, start new row
-			if (this.transform.position.x > 54) {
+			if (this.transform.position.x > (gridUnits - 1) * 6) {
 				cY += 1;
 				cX = 0;
 				transform.position = new Vector3 (0, transform.position.y - 6f, 0); 
@@ -73,7 +73,7 @@ public class test : MonoBehaviour {
 		//breadth-first-search 
 
 		//initializing status list
-		for (int i = 0; i < 100; i++) {
+		for (int i = 0; i < (gridUnits * gridUnits); i++) {
 			refscript.cell_status.Add(false);
 		}
 		//adds first node to queue
@@ -86,7 +86,7 @@ public class test : MonoBehaviour {
 			refscript.cell_status [refscript.currentNode] = true;
 
 			//checks and adds neighbors
-			if (refscript.currentNode % 10 != 0) {
+			if (refscript.currentNode % gridUnits != 0) {
 				left = refscript.currentNode - 1; 
 				if (Constants.WALLNODE != (int) refscript.cell_types[left] && 
 					(refscript.cell_status[left] != true) ) {
@@ -96,7 +96,7 @@ public class test : MonoBehaviour {
 				}
 			}
 
-			if (refscript.currentNode % 10 != 9) {
+			if (refscript.currentNode % gridUnits != gridUnits - 1) {
 				right = refscript.currentNode + 1;
 				if (Constants.WALLNODE != (int) refscript.cell_types[right] && 
 					(refscript.cell_status[right] != true) ) {
@@ -106,8 +106,8 @@ public class test : MonoBehaviour {
 				}
 			}
 
-			if (refscript.currentNode >= 10) {
-				up = refscript.currentNode - 10;
+			if (refscript.currentNode >= gridUnits) {
+				up = refscript.currentNode - gridUnits;
 				if (Constants.WALLNODE != (int) refscript.cell_types[up] && 
 					(refscript.cell_status[up] != true) ) {
 					//Debug.Log ("UP: Inserting" + up + "," + refscript.cell_status[up]);
@@ -116,8 +116,8 @@ public class test : MonoBehaviour {
 				}
 			}
 
-			if (refscript.currentNode < 90) {
-				down = refscript.currentNode + 10;
+			if (refscript.currentNode < gridUnits * (gridUnits - 1)) {
+				down = refscript.currentNode + gridUnits;
 				if (Constants.WALLNODE != (int) refscript.cell_types[down] && 
 					(refscript.cell_status[down]!= true)) {
 					//Debug.Log ("DOWN: Inserting" + down + "," + refscript.cell_status[down]);
@@ -125,7 +125,7 @@ public class test : MonoBehaviour {
 					refscript.cell_status [down] = true;
 				}
 			}
-			yield return new WaitForSeconds(0.2f) ;
+			yield return new WaitForSeconds(0.05f) ;
 
 		}
 		//tests
