@@ -40,7 +40,7 @@ public class test : MonoBehaviour {
 		//creates the cells and the obstacles in grid. 
 		for (int i = 0; i < (gridUnits * gridUnits)-1; i++) {
 			Vector3 myPos = new Vector3 (this.transform.position.x, this.transform.position.y, 0);
-			if (Random.Range (1, 10) > 1) {
+			if (Random.Range (1, 10) > 2) {
 				//clones regular cell and adds its atatus to the list
 				refscript.cellref.Add(Instantiate (myNode, myPos, Quaternion.identity));
 				refscript.cell_types.Add(Constants.NODE );
@@ -134,7 +134,7 @@ public class test : MonoBehaviour {
 
 		}
 
-		int destination = gridUnits * gridUnits - (gridUnits / 2);
+		int destination = 9;//gridUnits * gridUnits - (gridUnits / 2);
 		refscript.cellref [destination].name = "destination";
 		while (refscript.parents [destination ] != 0) {
 			refscript.cellref [refscript.parents [destination]].name = "Googy";
