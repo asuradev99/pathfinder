@@ -27,6 +27,7 @@ public class all_cells : MonoBehaviour {
 	public List<int> parents = new List <int> ();
 	public Queue<int> BreadthCoords = new Queue<int> ();
 	public int currentNode = 0; 
+	public int currentDist = 0;
 	public int tX;
 	public int tY;
 	public SortedList<int, int> g = new SortedList <int, int> (new DuplicateKeyComparer());

@@ -22,12 +22,12 @@ public class test : MonoBehaviour {
 	public int gridUnits = 10;//grid 
 	void Start () {
 		//run main function
-		StartCoroutine(Spec());
-
+		//StartCoroutine(Spec());
+		Spec();
 	}
 	//main function in an enumerator func so we can yield to frame count. 
 	public all_cells refscript; 
-	IEnumerator Spec(){
+	void Spec(){
 		//initialize reference script for Arraylist containing cell's status
 		refscript = refSprite.GetComponent<all_cells> ();
 		Closed refvar = refSprite.GetComponent<Closed> ();
@@ -58,7 +58,7 @@ public class test : MonoBehaviour {
 			refscript.cell_id.Add (i + 1, new Vector2 (cX, cY));
 			refscript.cell_num.Add (i + 1, (int)cY * gridUnits + cX);
 			cX += 1;
-			yield return 0;
+
 			//moves 6 pixels after each clone 
 			transform.position = new Vector3 (transform.position.x + 6f, transform.position.y, 0);
 
@@ -72,7 +72,10 @@ public class test : MonoBehaviour {
 
 
 		}
-		BFS ();
+		//BFS ();
+		//StartCoroutine(BestFirst());
+		StartCoroutine(djikstra());
+		//AStar();
 	}
 		
 	
@@ -146,12 +149,243 @@ public class test : MonoBehaviour {
 
 		int destination = 9;//gridUnits * gridUnits - (gridUnits / 2);
 		refscript.cellref [destination].name = "destination";
-		while (refscript.parents [destination ] != 0) {
-			refscript.cellref [refscript.parents [destination]].name = "Googy";
-			destination = refscript.parents [destination];
-		}
+		trailRender(destination);
 	}
 	void BestFirst(){
-		
+		//finds destination(random)
+		int destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		while (Constants.WALLNODE == (int)refscript.cell_types [destination]) {
+			destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		}
+		refscript.cellref [destination].name = "destination";
+		for (int i = 0; i < (gridUnits * gridUnits); i++) {
+			refscript.cell_status.Add(false);
+			refscript.parents.Add (-1);
+		}
+
+		bool done = false;
+		//adds first node to queue
+		refscript.g.Add(heuristic(0,destination), 0);
+		while (!done) {
+			//deletes first element from list
+			refscript.currentNode = refscript.g.Values[0];
+			refscript.g.RemoveAt (0);
+			done = (refscript.currentNode == destination);
+			refscript.cellref [refscript.currentNode].name = "Boogy";
+			refscript.cell_status [refscript.currentNode] = true;
+
+			//checks and adds neighbors
+			if (refscript.currentNode % gridUnits != 0) {
+				left = refscript.currentNode - 1; 
+				if (Constants.WALLNODE != (int) refscript.cell_types[left] && 
+					(refscript.cell_status[left] != true) ) {
+					//Debug.Log ("LEFT: Inserting" + left + "," + refscript.cell_status[left]);
+					refscript.g.Add (heuristic(left, destination),left);
+					refscript.parents [left] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode % gridUnits != gridUnits - 1) {
+				right = refscript.currentNode + 1;
+				if (Constants.WALLNODE != (int) refscript.cell_types[right] && 
+					(refscript.cell_status[right] != true) ) {
+					//Debug.Log ("RIGHT: Inserting" + right + "," + refscript.cell_status[right]);
+					refscript.g.Add(heuristic(right, destination), right);
+					refscript.cell_status [right] = true;
+					refscript.parents [right] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode >= gridUnits) {
+				up = refscript.currentNode - gridUnits;
+				if (Constants.WALLNODE != (int) refscript.cell_types[up] && 
+					(refscript.cell_status[up] != true) ) {
+					//Debug.Log ("UP: Inserting" + up + "," + refscript.cell_status[up]);
+					refscript.g.Add(heuristic(up, destination), up);
+					refscript.cell_status [up] = true;
+					refscript.parents [up] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode < gridUnits * (gridUnits - 1)) {
+				down = refscript.currentNode + gridUnits;
+				if (Constants.WALLNODE != (int) refscript.cell_types[down] && 
+					(refscript.cell_status[down]!= true)) {
+					//Debug.Log ("DOWN: Inserting" + down + "," + refscript.cell_status[down]);
+					refscript.g.Add (heuristic(down, destination), down);
+					refscript.cell_status [down] = true;
+					refscript.parents [down] = refscript.currentNode;
+				}
+			}
+			//yield return new WaitForSeconds(0.0001f) ;
+
+		}
+		trailRender(destination);
+
+	}
+	IEnumerator djikstra(){
+		//finds destination(random)
+		int destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		while (Constants.WALLNODE == (int)refscript.cell_types [destination]) {
+			destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		}
+		refscript.cellref [destination].name = "destination";
+		for (int i = 0; i < (gridUnits * gridUnits); i++) {
+			refscript.cell_status.Add(false);
+			refscript.parents.Add (-1);
+		}
+
+		bool done = false;
+		//adds first node to queue
+		refscript.g.Add(heuristic(0,destination), 0);
+		while (!done) {
+			//deletes first element from list
+			refscript.currentNode = refscript.g.Values[0];
+			refscript.currentDist = refscript.g.Keys [0];
+			refscript.g.RemoveAt (0);
+			done = (refscript.currentNode == destination);
+			refscript.cellref [refscript.currentNode].name = "Boogy";
+			refscript.cell_status [refscript.currentNode] = true;
+
+			//checks and adds neighbors
+			if (refscript.currentNode % gridUnits != 0) {
+				left = refscript.currentNode - 1; 
+				if (Constants.WALLNODE != (int) refscript.cell_types[left] && 
+					(refscript.cell_status[left] != true) ) {
+					//Debug.Log ("LEFT: Inserting" + left + "," + refscript.cell_status[left]);
+					refscript.g.Add (refscript.currentDist + 1,left);
+					refscript.parents [left] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode % gridUnits != gridUnits - 1) {
+				right = refscript.currentNode + 1;
+				if (Constants.WALLNODE != (int) refscript.cell_types[right] && 
+					(refscript.cell_status[right] != true) ) {
+					//Debug.Log ("RIGHT: Inserting" + right + "," + refscript.cell_status[right]);
+					refscript.g.Add(refscript.currentDist + 1, right);
+					refscript.cell_status [right] = true;
+					refscript.parents [right] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode >= gridUnits) {
+				up = refscript.currentNode - gridUnits;
+				if (Constants.WALLNODE != (int) refscript.cell_types[up] && 
+					(refscript.cell_status[up] != true) ) {
+					//Debug.Log ("UP: Inserting" + up + "," + refscript.cell_status[up]);
+					refscript.g.Add(refscript.currentDist + 1, up);
+					refscript.cell_status [up] = true;
+					refscript.parents [up] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode < gridUnits * (gridUnits - 1)) {
+				down = refscript.currentNode + gridUnits;
+				if (Constants.WALLNODE != (int) refscript.cell_types[down] && 
+					(refscript.cell_status[down]!= true)) {
+					//Debug.Log ("DOWN: Inserting" + down + "," + refscript.cell_status[down]);
+					refscript.g.Add (refscript.currentDist + 1, down);
+					refscript.cell_status [down] = true;
+					refscript.parents [down] = refscript.currentNode;
+				}
+			}
+			yield return new WaitForSeconds(0.001f) ;
+
+		}
+		trailRender(destination);
+	}
+	void  AStar(){
+		//finds destination(random)
+		int destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		while (Constants.WALLNODE == (int)refscript.cell_types [destination]) {
+			destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		}
+		refscript.cellref [destination].name = "destination";
+		for (int i = 0; i < (gridUnits * gridUnits); i++) {
+			refscript.cell_status.Add(false);
+			refscript.parents.Add (-1);
+		}
+
+		bool done = false;
+		//adds first node to queue
+		refscript.g.Add(heuristic(0,destination), 0);
+		while (!done) {
+			//deletes first element from list
+			refscript.currentNode = refscript.g.Values[0];
+			refscript.currentDist = refscript.g.Keys [0];
+			refscript.g.RemoveAt (0);
+			done = (refscript.currentNode == destination);
+			if (refscript.cellref [refscript.currentNode].name != "destination") {
+				refscript.cellref [refscript.currentNode].name = "Boogy";
+			}
+			refscript.cell_status [refscript.currentNode] = true;
+
+			//checks and adds neighbors
+			if (refscript.currentNode % gridUnits != 0) {
+				left = refscript.currentNode - 1; 
+				if (Constants.WALLNODE != (int) refscript.cell_types[left] && 
+					(refscript.cell_status[left] != true) ) {
+					//Debug.Log ("LEFT: Inserting" + left + "," + refscript.cell_status[left]);
+					refscript.g.Add (refscript.currentDist + heuristic(left, destination),left);
+					refscript.parents [left] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode % gridUnits != gridUnits - 1) {
+				right = refscript.currentNode + 1;
+				if (Constants.WALLNODE != (int) refscript.cell_types[right] && 
+					(refscript.cell_status[right] != true) ) {
+					//Debug.Log ("RIGHT: Inserting" + right + "," + refscript.cell_status[right]);
+					refscript.g.Add(refscript.currentDist + heuristic(right, destination), right);
+					refscript.cell_status [right] = true;
+					refscript.parents [right] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode >= gridUnits) {
+				up = refscript.currentNode - gridUnits;
+				if (Constants.WALLNODE != (int) refscript.cell_types[up] && 
+					(refscript.cell_status[up] != true) ) {
+					//Debug.Log ("UP: Inserting" + up + "," + refscript.cell_status[up]);
+					refscript.g.Add(refscript.currentDist + heuristic(up, destination), up);
+					refscript.cell_status [up] = true;
+					refscript.parents [up] = refscript.currentNode;
+				}
+			}
+
+			if (refscript.currentNode < gridUnits * (gridUnits - 1)) {
+				down = refscript.currentNode + gridUnits;
+				if (Constants.WALLNODE != (int) refscript.cell_types[down] && 
+					(refscript.cell_status[down]!= true)) {
+					//Debug.Log ("DOWN: Inserting" + down + "," + refscript.cell_status[down]);
+					refscript.g.Add (refscript.currentDist + heuristic(down, destination), down);
+					refscript.cell_status [down] = true;
+					refscript.parents [down] = refscript.currentNode;
+				}
+			}
+			//yield return new WaitForSeconds(0.00001f) ;
+
+		}
+		//while (refscript.parents [destination ] != 0) {
+			//refscript.cellref [refscript.parents [destination]].name = "Googy";
+			//destination = refscript.parents [destination];
+		//}
+		trailRender(destination);
+	}
+	int heuristic(int c1, int c2){
+		int x1 = c1 / 10;
+		int y1 = c1 % 10;
+		int x2 = c2 / 10;
+		int y2 = c2 % 10;
+		return(Mathf.Abs (x1 - x2) + Mathf.Abs (y1 - y2));
+	}
+	void trailRender(int comparator){
+		while (refscript.parents [comparator ] != 0) {
+			if (refscript.cellref [refscript.parents [comparator]].name != "destination") {
+				refscript.cellref [refscript.parents [comparator]].name = "Googy";
+			}
+			comparator = refscript.parents [comparator];
+		}
 	}
 }

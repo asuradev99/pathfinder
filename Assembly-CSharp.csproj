@@ -46,6 +46,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+     <Compile Include="Assets\CameraController.cs" />
      <Compile Include="Assets\Closed.cs" />
      <Compile Include="Assets\all_cells.cs" />
      <Compile Include="Assets\skinGrid.cs" />
