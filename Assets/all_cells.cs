@@ -33,21 +33,21 @@ public class all_cells : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		int k;
-		Debug.Log ("Start");
-		g.Add (-1, 5);
-		g.Add (-2, 2);
-		g.Add (0, 1);
-		g.Add (-10, 4);
-		k = g.Keys[0];
-		Debug.Log (k);
-
-		g.RemoveAt (0);
-		k = g.Keys[0];
-		Debug.Log (k);
-		g.Add (-3, 6);
-		k = g.Keys[0];
-		Debug.Log (k);
-
+		//Debug.Log ("Start");
+//		g.Add (-1, 5);
+//		g.Add (-2, 2);
+//		g.Add (0, 1);
+//		g.Add (-10, 4);
+//		k = g.Keys[0];
+//		Debug.Log (k);
+//
+//		g.RemoveAt (0);
+//		k = g.Keys[0];
+//		Debug.Log (k);
+//		g.Add (-3, 6);
+//		k = g.Keys[0];
+//		Debug.Log (k);
+//
 
 	}
 

@@ -23,14 +23,16 @@ public class test : MonoBehaviour {
 	void Start () {
 		//run main function
 		StartCoroutine(Spec());
+
 	}
 	//main function in an enumerator func so we can yield to frame count. 
+	public all_cells refscript; 
 	IEnumerator Spec(){
 		//initialize reference script for Arraylist containing cell's status
-		all_cells refscript = refSprite.GetComponent<all_cells> ();
+		refscript = refSprite.GetComponent<all_cells> ();
 		Closed refvar = refSprite.GetComponent<Closed> ();
 		//creates the starting node and adds it to the arraylist
-		refscript.cellref.Add(Instantiate (startNode, new Vector3 (this.transform.position.x, this.transform.position.y, 0), Quaternion.identity));
+		refscript.cellref.Add (Instantiate (startNode, new Vector3 (this.transform.position.x, this.transform.position.y, 0), Quaternion.identity));
 		refscript.cell_types.Add (Constants.STARTNODE);
 		refscript.cell_id.Add (0, new Vector2 (cX, cY));
 		refscript.cell_num.Add (0, cX * gridUnits + cY);
@@ -38,22 +40,22 @@ public class test : MonoBehaviour {
 		transform.position = new Vector3 (transform.position.x + 6f, transform.position.y, 0);
 
 		//creates the cells and the obstacles in grid. 
-		for (int i = 0; i < (gridUnits * gridUnits)-1; i++) {
+		for (int i = 0; i < (gridUnits * gridUnits) - 1; i++) {
 			Vector3 myPos = new Vector3 (this.transform.position.x, this.transform.position.y, 0);
 			if (Random.Range (1, 10) > 2) {
 				//clones regular cell and adds its atatus to the list
-				refscript.cellref.Add(Instantiate (myNode, myPos, Quaternion.identity));
-				refscript.cell_types.Add(Constants.NODE );
+				refscript.cellref.Add (Instantiate (myNode, myPos, Quaternion.identity));
+				refscript.cell_types.Add (Constants.NODE);
 
 
 			} else {
 				//clones wall cell and adds its status to the list
-				refscript.cellref.Add(Instantiate (wallNode, myPos, Quaternion.identity));
-				refscript.cell_types.Add (Constants.WALLNODE );
+				refscript.cellref.Add (Instantiate (wallNode, myPos, Quaternion.identity));
+				refscript.cell_types.Add (Constants.WALLNODE);
 			}
 
 			//adds cell position to list
-			refscript.cell_id.Add(i+1, new Vector2(cX,cY));
+			refscript.cell_id.Add (i + 1, new Vector2 (cX, cY));
 			refscript.cell_num.Add (i + 1, (int)cY * gridUnits + cX);
 			cX += 1;
 			yield return 0;
@@ -70,6 +72,14 @@ public class test : MonoBehaviour {
 
 
 		}
+		BFS ();
+	}
+		
+	
+
+	// Update is called once per frame
+
+	void BFS(){
 		//breadth-first-search 
 
 		//initializing status list
@@ -130,7 +140,7 @@ public class test : MonoBehaviour {
 					refscript.parents [down] = refscript.currentNode;
 				}
 			}
-			yield return new WaitForSeconds(0.05f) ;
+			//yield return new WaitForSeconds(0.05f) ;
 
 		}
 
@@ -141,9 +151,7 @@ public class test : MonoBehaviour {
 			destination = refscript.parents [destination];
 		}
 	}
-
-	// Update is called once per frame
-	void Update () {
+	void BestFirst(){
 		
 	}
 }
