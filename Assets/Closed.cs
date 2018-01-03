@@ -17,8 +17,8 @@ public class Closed : MonoBehaviour {
 			//GetComponent<SpriteRenderer>().color = Color.red;
 		}
 
-		if (type == 2) {
-		//GetComponent<SpriteRenderer>().color = Color.white;
+		if (name == "Oog") {
+		    GetComponent<SpriteRenderer>().color = Color.white;
 		}
 		if (name == "Boogy") {
 			GetComponent<SpriteRenderer>().color = Color.red;

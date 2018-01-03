@@ -8,7 +8,7 @@ public static class Constants
 	public const int NODE = 1;
 }
 public class test : MonoBehaviour {
-	
+	public int destination;
 	public GameObject myNode;
 	public GameObject wallNode;
 	public GameObject startNode;
@@ -20,6 +20,12 @@ public class test : MonoBehaviour {
 	int comparator2 = 0;
 	int left, right, up, down;
 	public int gridUnits = 10;//grid 
+	public bool running = false; 
+	string s;
+	float time = 0;
+	public float seconds;
+	public float minutes;
+	bool timeron = false;
 	void Start () {
 		//run main function
 		//StartCoroutine(Spec());
@@ -72,19 +78,24 @@ public class test : MonoBehaviour {
 
 
 		}
+		destination = Random.Range(0, gridUnits * gridUnits - 1);
+		refscript.cellref [destination].name = "destination";
+
 		//BFS ();
 		//StartCoroutine(BestFirst());
-		StartCoroutine(djikstra());
-		//AStar();
+		//StartCoroutine(djikstra());
+		//StartCoroutine(AStar());
+		//StartCoroutine(BestFirst());
 	}
 		
 	
 
 	// Update is called once per frame
 
-	void BFS(){
+	IEnumerator BFS(){
 		//breadth-first-search 
 
+		running = true;
 		//initializing status list
 		for (int i = 0; i < (gridUnits * gridUnits); i++) {
 			refscript.cell_status.Add(false);
@@ -92,10 +103,14 @@ public class test : MonoBehaviour {
 		}
 		//adds first node to queue
 		refscript.BreadthCoords.Enqueue (0);
-		while (refscript.BreadthCoords.Count != 0) {
+		bool done = false;
+		while (!done) {
+			timeron = true;
 			//deletes first element from queue
+			Debug.Log(seconds);
 			refscript.currentNode = refscript.BreadthCoords.Dequeue ();
 			//refscript.cellref [1].GetComponent<SpriteRenderer> ().color = Color.red; 
+			done = (refscript.currentNode == destination);
 			refscript.cellref [refscript.currentNode].name = "Boogy";
 			refscript.cell_status [refscript.currentNode] = true;
 
@@ -143,21 +158,19 @@ public class test : MonoBehaviour {
 					refscript.parents [down] = refscript.currentNode;
 				}
 			}
-			//yield return new WaitForSeconds(0.05f) ;
+			yield return new WaitForSeconds(0.05f) ;
 
 		}
-
-		int destination = 9;//gridUnits * gridUnits - (gridUnits / 2);
-		refscript.cellref [destination].name = "destination";
+		Debug.Log ("| Time in seconds| " + minutes.ToString () + ":" + seconds.ToString ()); 
+		timeron = false;
 		trailRender(destination);
+		running = false;
 	}
-	void BestFirst(){
+	IEnumerator BestFirst(){
 		//finds destination(random)
-		int destination = Random.Range(0, gridUnits * gridUnits - 1); 
-		while (Constants.WALLNODE == (int)refscript.cell_types [destination]) {
-			destination = Random.Range(0, gridUnits * gridUnits - 1); 
-		}
-		refscript.cellref [destination].name = "destination";
+		//int destination = Random.Range(0, gridUnits * gridUnits - 1); 
+
+
 		for (int i = 0; i < (gridUnits * gridUnits); i++) {
 			refscript.cell_status.Add(false);
 			refscript.parents.Add (-1);
@@ -217,7 +230,7 @@ public class test : MonoBehaviour {
 					refscript.parents [down] = refscript.currentNode;
 				}
 			}
-			//yield return new WaitForSeconds(0.0001f) ;
+			yield return new WaitForSeconds(0.01f) ;
 
 		}
 		trailRender(destination);
@@ -225,11 +238,11 @@ public class test : MonoBehaviour {
 	}
 	IEnumerator djikstra(){
 		//finds destination(random)
-		int destination = Random.Range(0, gridUnits * gridUnits - 1); 
-		while (Constants.WALLNODE == (int)refscript.cell_types [destination]) {
-			destination = Random.Range(0, gridUnits * gridUnits - 1); 
-		}
-		refscript.cellref [destination].name = "destination";
+		//int destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		//while (Constants.WALLNODE == (int)refscript.cell_types [destination]) {
+		//	destination = Random.Range(0, gridUnits * gridUnits - 1); 
+		//}
+		//refscript.cellref [destination].name = "destination";
 		for (int i = 0; i < (gridUnits * gridUnits); i++) {
 			refscript.cell_status.Add(false);
 			refscript.parents.Add (-1);
@@ -295,13 +308,8 @@ public class test : MonoBehaviour {
 		}
 		trailRender(destination);
 	}
-	void  AStar(){
+	IEnumerator AStar(){
 		//finds destination(random)
-		int destination = Random.Range(0, gridUnits * gridUnits - 1); 
-		while (Constants.WALLNODE == (int)refscript.cell_types [destination]) {
-			destination = Random.Range(0, gridUnits * gridUnits - 1); 
-		}
-		refscript.cellref [destination].name = "destination";
 		for (int i = 0; i < (gridUnits * gridUnits); i++) {
 			refscript.cell_status.Add(false);
 			refscript.parents.Add (-1);
@@ -364,7 +372,7 @@ public class test : MonoBehaviour {
 					refscript.parents [down] = refscript.currentNode;
 				}
 			}
-			//yield return new WaitForSeconds(0.00001f) ;
+			yield return new WaitForSeconds(0.00001f) ;
 
 		}
 		//while (refscript.parents [destination ] != 0) {
@@ -388,4 +396,41 @@ public class test : MonoBehaviour {
 			comparator = refscript.parents [comparator];
 		}
 	}
+	void clear(){
+		
+		refscript.cell_status.Clear ();
+		refscript.parents.Clear ();
+		refscript.BreadthCoords.Clear ();
+		refscript.g.Clear ();
+
+		for (int i = 0; i < refscript.cellref.Count; i++) {
+			if (refscript.cellref [i].name == "Boogy" || refscript.cellref [i].name == "Googy" ) {
+				refscript.cellref [i].name = "Oog";
+			}
+		}
+		refscript.cellref [destination].name = "destination";
+
+	}
+
+		void startTick(){
+			
+		time += Time.deltaTime;
+		seconds = time % 60;
+		minutes = Mathf.Floor (time / 60);
+
+		}
+		void stopTick(){
+			
+			
+			seconds = 0;
+			minutes = 0;
+			time = 0;
+		}
+		void Update(){
+		if (timeron) {
+			startTick ();
+		} else {
+			stopTick ();
+		}
+		}
 }
