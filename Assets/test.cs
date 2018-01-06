@@ -15,9 +15,6 @@ public class test : MonoBehaviour {
 	public GameObject refSprite;
 	int cX = 0;
 	int cY = 0;
-	int junk = 0; 
-	int  comparator = 0;
-	int comparator2 = 0;
 	int left, right, up, down;
 	public int gridUnits = 10;//grid 
 	public bool running = false; 
@@ -26,6 +23,7 @@ public class test : MonoBehaviour {
 	public float seconds;
 	public float minutes;
 	bool timeron = false;
+	int totaldist, totalexp;
 	void Start () {
 		//run main function
 		//StartCoroutine(Spec());
@@ -36,7 +34,7 @@ public class test : MonoBehaviour {
 	void Spec(){
 		//initialize reference script for Arraylist containing cell's status
 		refscript = refSprite.GetComponent<all_cells> ();
-		Closed refvar = refSprite.GetComponent<Closed> ();
+		//Closed refvar = refSprite.GetComponent<Closed> ();
 		//creates the starting node and adds it to the arraylist
 		refscript.cellref.Add (Instantiate (startNode, new Vector3 (this.transform.position.x, this.transform.position.y, 0), Quaternion.identity));
 		refscript.cell_types.Add (Constants.STARTNODE);
@@ -78,9 +76,13 @@ public class test : MonoBehaviour {
 
 
 		}
-		destination = Random.Range(0, gridUnits * gridUnits - 1);
-		refscript.cellref [destination].name = "destination";
+		destination = Random.Range (0, gridUnits * gridUnits - 1);
+		while (refscript.cellref [destination].name == "Wall(Clone)") {
+			destination = Random.Range (0, gridUnits * gridUnits - 1);
 
+		}
+
+		refscript.cellref [destination].name = "destination";
 		//BFS ();
 		//StartCoroutine(BestFirst());
 		//StartCoroutine(djikstra());
@@ -107,11 +109,13 @@ public class test : MonoBehaviour {
 		while (!done) {
 			timeron = true;
 			//deletes first element from queue
-			Debug.Log(seconds);
+			//Debug.Log(seconds);
 			refscript.currentNode = refscript.BreadthCoords.Dequeue ();
 			//refscript.cellref [1].GetComponent<SpriteRenderer> ().color = Color.red; 
 			done = (refscript.currentNode == destination);
-			refscript.cellref [refscript.currentNode].name = "Boogy";
+			if (refscript.cellref [refscript.currentNode].name != "destination") {
+				refscript.cellref [refscript.currentNode].name = "Boogy";
+			}
 			refscript.cell_status [refscript.currentNode] = true;
 
 			//checks and adds neighbors
@@ -161,9 +165,10 @@ public class test : MonoBehaviour {
 			yield return new WaitForSeconds(0.05f) ;
 
 		}
-		Debug.Log ("| Time in seconds| " + minutes.ToString () + ":" + seconds.ToString ()); 
-		timeron = false;
 		trailRender(destination);
+		Debug.Log ("| Time in seconds| " + minutes.ToString () + ":" + seconds.ToString () + getCounts()); 
+		timeron = false;
+
 		running = false;
 	}
 	IEnumerator BestFirst(){
@@ -180,11 +185,14 @@ public class test : MonoBehaviour {
 		//adds first node to queue
 		refscript.g.Add(heuristic(0,destination), 0);
 		while (!done) {
+			timeron = true;
 			//deletes first element from list
 			refscript.currentNode = refscript.g.Values[0];
 			refscript.g.RemoveAt (0);
 			done = (refscript.currentNode == destination);
-			refscript.cellref [refscript.currentNode].name = "Boogy";
+			if (refscript.cellref [refscript.currentNode].name != "destination") {
+				refscript.cellref [refscript.currentNode].name = "Boogy";
+			}
 			refscript.cell_status [refscript.currentNode] = true;
 
 			//checks and adds neighbors
@@ -234,6 +242,11 @@ public class test : MonoBehaviour {
 
 		}
 		trailRender(destination);
+		Debug.Log ("| Time in seconds| " + minutes.ToString () + ":" + seconds.ToString () + getCounts()); 
+		timeron = false;
+
+		running = false;
+
 
 	}
 	IEnumerator djikstra(){
@@ -252,12 +265,15 @@ public class test : MonoBehaviour {
 		//adds first node to queue
 		refscript.g.Add(heuristic(0,destination), 0);
 		while (!done) {
+			timeron = true;
 			//deletes first element from list
 			refscript.currentNode = refscript.g.Values[0];
 			refscript.currentDist = refscript.g.Keys [0];
 			refscript.g.RemoveAt (0);
 			done = (refscript.currentNode == destination);
-			refscript.cellref [refscript.currentNode].name = "Boogy";
+			if (refscript.cellref [refscript.currentNode].name != "destination") {
+				refscript.cellref [refscript.currentNode].name = "Boogy";
+			}
 			refscript.cell_status [refscript.currentNode] = true;
 
 			//checks and adds neighbors
@@ -307,6 +323,10 @@ public class test : MonoBehaviour {
 
 		}
 		trailRender(destination);
+		Debug.Log ("| Time in seconds| " + minutes.ToString () + ":" + seconds.ToString () + getCounts()); 
+		timeron = false;
+
+		running = false;
 	}
 	IEnumerator AStar(){
 		//finds destination(random)
@@ -320,6 +340,7 @@ public class test : MonoBehaviour {
 		refscript.g.Add(heuristic(0,destination), 0);
 		while (!done) {
 			//deletes first element from list
+			timeron = true;
 			refscript.currentNode = refscript.g.Values[0];
 			refscript.currentDist = refscript.g.Keys [0];
 			refscript.g.RemoveAt (0);
@@ -380,6 +401,10 @@ public class test : MonoBehaviour {
 			//destination = refscript.parents [destination];
 		//}
 		trailRender(destination);
+		Debug.Log ("| Time in seconds| " + minutes.ToString () + ":" + seconds.ToString () + getCounts()); 
+		timeron = false;
+
+		running = false;
 	}
 	int heuristic(int c1, int c2){
 		int x1 = c1 / 10;
@@ -426,6 +451,22 @@ public class test : MonoBehaviour {
 			minutes = 0;
 			time = 0;
 		}
+	    string getCounts(){
+		totaldist = 0;
+		totalexp = 0;
+		for(int i = 0; i < refscript.cellref.Count; i++){
+			if (refscript.cellref [i].name == "Googy") {
+				totaldist += 1;
+				totalexp += 1;
+			}
+			if (refscript.cellref [i].name == "Boogy") {
+				totalexp += 1;
+			}
+		}
+		totalexp -= 1;
+		return " | " + "Total nodes explored: " + totalexp.ToString() + " | Total length of path found: " + totaldist.ToString();
+
+	    }
 		void Update(){
 		if (timeron) {
 			startTick ();
