@@ -33,7 +33,9 @@ public class all_cells : MonoBehaviour {
 	public SortedList<int, int> g = new SortedList <int, int> (new DuplicateKeyComparer());
 	// Use this for initialization
 	void Start () {
-		int k;
+
+
+
 		//Debug.Log ("Start");
 //		g.Add (-1, 5);
 //		g.Add (-2, 2);
@@ -48,7 +50,8 @@ public class all_cells : MonoBehaviour {
 //		g.Add (-3, 6);
 //		k = g.Keys[0];
 //		Debug.Log (k);
-//
+//      
+
 
 	}
 

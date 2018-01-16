@@ -15,7 +15,7 @@ public class test : MonoBehaviour {
 	public GameObject refSprite;
 	int cX = 0;
 	int cY = 0;
-	int left, right, up, down;
+	int left, right, up, down, iterator;
 	public int gridUnits = 10;//grid 
 	public bool running = false; 
 	string s;
@@ -27,7 +27,7 @@ public class test : MonoBehaviour {
 	void Start () {
 		//run main function
 		//StartCoroutine(Spec());
-		Spec();
+		//SpecBlank();
 	}
 	//main function in an enumerator func so we can yield to frame count. 
 	public all_cells refscript; 
@@ -46,7 +46,7 @@ public class test : MonoBehaviour {
 		//creates the cells and the obstacles in grid. 
 		for (int i = 0; i < (gridUnits * gridUnits) - 1; i++) {
 			Vector3 myPos = new Vector3 (this.transform.position.x, this.transform.position.y, 0);
-			if (Random.Range (1, 10) > 2) {
+			if (Random.Range (1, 10) > 3) {
 				//clones regular cell and adds its atatus to the list
 				refscript.cellref.Add (Instantiate (myNode, myPos, Quaternion.identity));
 				refscript.cell_types.Add (Constants.NODE);
@@ -89,7 +89,56 @@ public class test : MonoBehaviour {
 		//StartCoroutine(AStar());
 		//StartCoroutine(BestFirst());
 	}
-		
+	void SpecBlank(){
+		//initialize reference script for Arraylist containing cell's status
+		refscript = refSprite.GetComponent<all_cells> ();
+		//Closed refvar = refSprite.GetComponent<Closed> ();
+		//creates the starting node and adds it to the arraylist
+		refscript.cellref.Add (Instantiate (startNode, new Vector3 (this.transform.position.x, this.transform.position.y, 0), Quaternion.identity));
+		refscript.cell_types.Add (Constants.STARTNODE);
+		refscript.cell_id.Add (0, new Vector2 (cX, cY));
+		refscript.cell_num.Add (0, cX * gridUnits + cY);
+		cX += 1;
+		transform.position = new Vector3 (transform.position.x + 6f, transform.position.y, 0);
+
+		//creates the cells and the obstacles in grid. 
+		for (int i = 0; i < (gridUnits * gridUnits) - 1; i++) {
+			Vector3 myPos = new Vector3 (this.transform.position.x, this.transform.position.y, 0);
+			refscript.cellref.Add (Instantiate (myNode, myPos, Quaternion.identity));
+			refscript.cell_types.Add (Constants.NODE);
+
+
+			//adds cell position to list
+			refscript.cell_id.Add (i + 1, new Vector2 (cX, cY));
+			refscript.cell_num.Add (i + 1, (int)cY * gridUnits + cX);
+			cX += 1;
+
+			//moves 6 pixels after each clone 
+			transform.position = new Vector3 (transform.position.x + 6f, transform.position.y, 0);
+
+
+			//if my x-position is greater than 54, start new row
+			if (this.transform.position.x > (gridUnits - 1) * 6) {
+				cY += 1;
+				cX = 0;
+				transform.position = new Vector3 (0, transform.position.y - 6f, 0); 
+			}
+
+
+		}
+		destination = Random.Range (0, gridUnits * gridUnits - 1);
+		while (refscript.cellref [destination].name == "Wall(Clone)") {
+			destination = Random.Range (0, gridUnits * gridUnits - 1);
+
+		}
+
+		refscript.cellref [destination].name = "destination";
+		//BFS ();
+		//StartCoroutine(BestFirst());
+		//StartCoroutine(djikstra());
+		//StartCoroutine(AStar());
+		//StartCoroutine(BestFirst());
+	}
 	
 
 	// Update is called once per frame
@@ -162,7 +211,7 @@ public class test : MonoBehaviour {
 					refscript.parents [down] = refscript.currentNode;
 				}
 			}
-			yield return new WaitForSeconds(0.05f) ;
+			yield return new WaitForSeconds(0.01f) ;
 
 		}
 		trailRender(destination);
@@ -201,7 +250,7 @@ public class test : MonoBehaviour {
 				if (Constants.WALLNODE != (int) refscript.cell_types[left] && 
 					(refscript.cell_status[left] != true) ) {
 					//Debug.Log ("LEFT: Inserting" + left + "," + refscript.cell_status[left]);
-					refscript.g.Add (heuristic(left, destination),left);
+					refscript.g.Add (heuristic(left, destination),left);         
 					refscript.parents [left] = refscript.currentNode;
 				}
 			}
@@ -468,10 +517,20 @@ public class test : MonoBehaviour {
 
 	    }
 		void Update(){
+		
 		if (timeron) {
 			startTick ();
 		} else {
 			stopTick ();
+		}
+		for (iterator = 0; iterator < refscript.cellref.Count; iterator++) {
+			if (refscript.cellref [iterator].name == "Wall") {
+				Destroy (refscript.cellref [iterator]);
+				refscript.cellref [iterator] = Instantiate (wallNode, refscript.cellref[iterator].transform.position, Quaternion.identity);
+				refscript.cell_types[iterator] = (Constants.WALLNODE);
+			}
+
+
 		}
 		}
 }

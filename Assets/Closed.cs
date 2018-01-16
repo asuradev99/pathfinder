@@ -30,4 +30,9 @@ public class Closed : MonoBehaviour {
 			GetComponent<SpriteRenderer> ().color = Color.cyan;
 		}
 	}
+		
+	void OnMouseDown (){
+		name = "Wall";
+
+	}
 }
